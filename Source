@@ -1,0 +1,31 @@
+# URLアクセスイブラリ読み込み
+require 'open-uri'
+# Nokogiriライブラリ読み込み
+require 'nokogiri'
+ 
+#URL
+url = 'http://baseball.yahoo.co.jp/npb/stats/batter?series=1'
+ 
+charset = nil
+html = open(url) do |f|
+  charset = f.charset # 文字種別を取得
+  f.read # htmlを読み込み→変数htmlに渡す
+end
+ 
+# html解析→オブジェクト生成
+doc = Nokogiri::HTML.parse(html, nil, charset)
+ 
+doc.xpath('//div[@class = "NpbCl p5"]').each do |node|
+
+	for i in 0...10 do
+		#順位
+		print doc.xpath('//td[@class = "ct"]')[i].inner_text + "\s"
+		#チーム名
+		print doc.xpath('//td[@class = "ltnb NpbLogoSS"]')[i].inner_text + "\s"		
+		#名前
+		print doc.xpath('//td[@class = "ltnb yjM"]')[i].inner_text + "\t"
+		#打率
+		print doc.xpath('//td[@class = "active"]')[i].inner_text + "\n"
+
+	end
+end
